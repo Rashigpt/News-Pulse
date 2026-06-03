@@ -1,36 +1,47 @@
-import React, { useState } from 'react'
-import Navbar from './Navbar';
-import NewsBoard from './NewsBoard';
-// import NewsItem from './NewsItem';
+import { useState, useRef } from 'react'
+import Navbar from './Navbar'
+import NewsBoard from './NewsBoard'
+import Footer from './Footer'
 
- const App = () => {
-  const[category,setCategory]=useState("general");
-  return (                                             
-    <div className="min-vh-100 d-flex flex-column"             
-      style={{
-        background:
-          "linear-gradient(135deg, #1e3c72, #2a5298, #3a7bd5, #00d2ff)",
-        backgroundSize: "400% 400%",
-        animation: "gradientMove 12s ease infinite",
-      }}>
-                                                       {/* CCS LAST  */}
-      <Navbar setCategory={setCategory}/>
+const App = () => {
+  const [category, setCategory] = useState("general")
+  const [animKey, setAnimKey] = useState(0)
+  const [searchQuery, setSearchQuery] = useState("")
+  const footerRef = useRef(null)
 
-      <div className="container mt-4 flex-grow-1">     {/* CCS DIV LAST  */}
-        <NewsBoard category={category} />            
-      </div>                                    
+  const handleCategory = (cat) => {
+    setCategory(cat)
+    setAnimKey(prev => prev + 1)
+    setSearchQuery("") // clear search on category change
+  }
 
-      {/* Animation keyframes inline */}                {/* CCS LAST  */}
-      <style>{`
-        @keyframes gradientMove {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-      `}</style>
-      
+  const handleSearch = (query) => {
+    setSearchQuery(query)
+    setAnimKey(prev => prev + 1)
+  }
+
+  const scrollToFooter = () => {
+    footerRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F6FAFD] font-sans flex flex-col">
+      <Navbar
+        category={category}
+        setCategory={handleCategory}
+        onSearch={handleSearch}
+        onSubscribe={scrollToFooter}
+      />
+      <main className="max-w-7xl mx-auto px-4 py-6 w-full flex-1">
+        <div key={animKey} className="animate-fadein">
+          <NewsBoard category={category} searchQuery={searchQuery} />
+        </div>
+      </main>
+      <div ref={footerRef}>
+        <Footer />
+      </div>
     </div>
   )
 }
 
-export default App;
+export default App

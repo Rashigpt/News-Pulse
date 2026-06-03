@@ -1,45 +1,45 @@
-import React from "react";
-import image from "./assets/news.jpg";
+import fallback from './assets/news.jpg'
 
-const NewsItem = ({ title, description, src, url }) => {
+const NewsItem = ({ title, description, src, url, category, source, publishedAt }) => {
+  const timeAgo = (dateStr) => {
+    if (!dateStr) return ''
+    const diff = Math.floor((Date.now() - new Date(dateStr)) / 60000)
+    if (diff < 60) return `${diff}m ago`
+    if (diff < 1440) return `${Math.floor(diff / 60)}h ago`
+    return `${Math.floor(diff / 1440)}d ago`
+  }
+
   return (
-    <div
-      className="card bg-dark text-light border-0 h-100"  // fixed typo 'hadow-sm', added h-100 for equal height cards
-      style={{
-        borderRadius: "15px",
-        transition: "transform 0.3s, box-shadow 0.3s",
-        // removed fixed width — now controlled by col grid
-      }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.transform = "translateY(-8px) scale(1.03)";
-        e.currentTarget.style.boxShadow = "0 0 25px rgba(255,255,255,0.2)";
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.transform = "none";
-        e.currentTarget.style.boxShadow = "0 0 10px rgba(255,255,255,0.1)";
-      }}
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block"
     >
-      <img
-        src={src ? src : image}
-        className="card-img-top img-fluid"
-        style={{ height: "200px", objectFit: "cover", borderRadius: "12px 12px 0 0" }}
-        alt="news"
-      />
-      <div className="card-body d-flex flex-column">
-        <h5 className="card-title text-warning fw-bold">
-          {title ? title.slice(0, 50) : "No Title"}
-        </h5>
-        <p className="card-text text-secondary flex-grow-1">
-          {description ? description.slice(0, 90) : "No description available."}
+      <div className="border-t-2 border-[#0A1931] pt-3">
+        <div className="overflow-hidden rounded mb-3">
+          <img
+            src={src || fallback}
+            alt={title}
+            className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+        <p className="text-[9px] font-black tracking-[2px] uppercase text-[#4A7FA7] mb-1">
+          {category}
         </p>
-        <a href={url} target="_blank" rel="noopener noreferrer"
-          className="btn btn-primary mt-auto"  // mt-auto pushes button to bottom
-          style={{ background: "linear-gradient(90deg, #ff8a00, #e52e71)", border: "none" }}>
-          Read More
-        </a>
+        <h3 className="font-serif text-sm font-bold text-[#0A1931] leading-snug mb-2 group-hover:text-[#1A3D63] transition-colors">
+          {title?.slice(0, 80)}
+        </h3>
+        <p className="text-[11px] text-[#4A7FA7] leading-relaxed mb-3">
+          {description?.slice(0, 80)}
+        </p>
+        <div className="flex items-center justify-between text-[10px] text-[#B3CFE5]">
+          <span>{source}</span>
+          <span>{timeAgo(publishedAt)}</span>
+        </div>
       </div>
-    </div>
-  );
-};
+    </a>
+  )
+}
 
-export default NewsItem;
+export default NewsItem
